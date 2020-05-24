@@ -6,6 +6,8 @@ import Layout from 'components/Layout';
 import Container from 'components/Container';
 import Map from 'components/Map';
 
+import axios from 'axios';
+
 import gatsby_astronaut from 'assets/images/gatsby-astronaut.jpg';
 
 const LOCATION = {
@@ -23,7 +25,18 @@ const IndexPage = () => {
    */
 
   async function mapEffect({ leafletElement: map } = {}) {
+    let resp;
 
+    try {
+      resp = await axios.get('https://corona.lmao.ninja/v2/countries');
+
+    } catch(error) {
+      console.log(`Failed to fecth countries: ${error.message}`, error);
+      return;
+    }
+
+    const { data = [] } = resp;
+    console.log('data:', data);
   }
 
   const mapSettings = {
