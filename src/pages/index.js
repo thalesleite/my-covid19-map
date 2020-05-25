@@ -2,7 +2,7 @@ import React from 'react';
 import { Helmet } from 'react-helmet';
 import L from 'leaflet';
 
-import axios from 'axios';
+import { useTracker } from 'hooks';
 
 import Layout from 'components/Layout';
 import Container from 'components/Container';
@@ -16,6 +16,15 @@ const CENTER = [LOCATION.lat, LOCATION.lng];
 const DEFAULT_ZOOM = 2;
 
 const IndexPage = () => {
+  const { data: stats = {} } = useTracker({
+    api: 'all',
+  });
+  
+  const { data: countries = [] } = useTracker({
+    api: 'countries'
+  });
+  
+  const hasCountries = Array.isArray(countries) && countries.length > 0;
 
   /**
    * mapEffect
@@ -23,24 +32,11 @@ const IndexPage = () => {
    * @example Here this is and example of being used to zoom in and set a popup on load
    */
   async function mapEffect({ leafletElement: map } = {}) {
-    let resp;
-
-    try {
-      resp = await axios.get('https://corona.lmao.ninja/v2/countries');
-
-    } catch(error) {
-      console.log(`Failed to fecth countries: ${error.message}`, error);
-      return;
-    }
-
-    const { data = [] } = resp;
-    const hashData = Array.isArray(data) && data.length > 0;
-
-    if (!hashData) return;
+    if (!hasCountries) return;
 
     const geoJson = {
       type: 'FeatureCollection',
-      features: data.map((country = {}) => {
+      features: countries.map((country = {}) => {
         const { countryInfo = {} } = country;
         const { lat, long: lng } = countryInfo;
         return {
