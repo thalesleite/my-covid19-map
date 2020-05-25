@@ -3,7 +3,7 @@ import { Helmet } from 'react-helmet';
 import L from 'leaflet';
 
 import { useTracker } from 'hooks';
-import { commafy } from 'lib/util';
+import { commafy, friendlyDate } from 'lib/util';
 
 import Layout from 'components/Layout';
 import Map from 'components/Map';
@@ -142,14 +142,14 @@ const IndexPage = () => {
   return (
     <Layout pageName="home">
       <Helmet>
-        <title>Home Page</title>
+        <title>COVID19 Map</title>
       </Helmet>
 
       <div className="tracker">
         <Map {...mapSettings} />
         <div className="tracker-stats">
           <ul>
-            { dashboardStats.map(({ primary = {}, secondary = {} }, i) => {
+            { dashboardStats.map(({ primary = {}, secondary = {} }, i ) => {
               return (
                 <li key={`Stat-${i}`} className="tracker-stat">
                   { primary.value && (
@@ -157,17 +157,20 @@ const IndexPage = () => {
                       { primary.value }
                       <strong>{ primary.label }</strong>
                     </p>
-                  )}
+                  ) }
                   { secondary.value && (
                     <p className="tracker-stat-secondary">
                       { secondary.value }
                       <strong>{ secondary.label }</strong>
                     </p>
-                  )}
+                  ) }
                 </li>
               );
-            })}
+            }) }
           </ul>
+        </div>
+        <div className="tracker-last-updated">
+          <p>Last Updated: { stats ? friendlyDate(stats?.updated) : '-' }</p>
         </div>
       </div>
     </Layout>
