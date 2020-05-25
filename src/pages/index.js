@@ -19,12 +19,44 @@ const IndexPage = () => {
   const { data: stats = {} } = useTracker({
     api: 'all',
   });
-  
+
   const { data: countries = [] } = useTracker({
     api: 'countries'
   });
   
   const hasCountries = Array.isArray(countries) && countries.length > 0;
+  const dashboardStats = [
+    {
+      primary: {
+        label: 'Total Cases',
+        value: stats?.cases
+      },
+      secondary: {
+        label: 'Per 1 Million',
+        value: stats?.casesPerOneMillion
+      }
+    },
+    {
+      primary: {
+        label: 'Total Deaths',
+        value: stats?.deaths
+      },
+      secondary: {
+        label: 'Per 1 Million',
+        value: stats?.deathsPerOneMillion
+      }
+    },
+    {
+      primary: {
+        label: 'Total Tests',
+        value: stats?.tests
+      },
+      secondary: {
+        label: 'Per 1 Million',
+        value: stats?.testsPerOneMillion
+      }
+    }
+  ];
 
   /**
    * mapEffect
@@ -113,16 +145,31 @@ const IndexPage = () => {
         <title>Home Page</title>
       </Helmet>
 
-      <Map {...mapSettings} />
-      
-      <Container type="content" className="text-center home-start">
-        <h2>Still Getting Started?</h2>
-        <p>Run the following in your terminal!</p>
-        <pre>
-          <code>gatsby new [directory] https://github.com/colbyfayock/gatsby-starter-leaflet</code>
-        </pre>
-        <p className="note">Note: Gatsby CLI required globally for the above command</p>
-      </Container>
+      <div className="tracker">
+        <Map {...mapSettings} />
+        <div className="tracker-stats">
+          <ul>
+            { dashboardStats.map(({ primary = {}, secondary = {} }, i) => {
+              return (
+                <li key={`Stat-${i}`} className="tracker-stat">
+                  { primary.value && (
+                    <p className="tracker-stat-primary">
+                      { primary.value }
+                      <strong>{ primary.label }</strong>
+                    </p>
+                  )}
+                  { secondary.value && (
+                    <p className="tracker-stat-secondary">
+                      { secondary.value }
+                      <strong>{ secondary.label }</strong>
+                    </p>
+                  )}
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+      </div>
     </Layout>
   );
 };
